@@ -1,0 +1,290 @@
+{
+  "hash": "a52da7b1ab029964",
+  "manifest_freeze": {
+    "generated_at": "2026-09-21T05:30:19.104793+00:00",
+    "manifests": [
+      {
+        "bytes": 12253100,
+        "dataset_manifest_hash": "a1c326a9f158888eb3d8c471713b30496344c366093c73563a0b859776a365ba",
+        "filename": "selection_manifest_seed00.jsonl",
+        "path": "artifacts/phase12_selection/selection_manifest_seed00.jsonl",
+        "raw_sha256": "7619983c0e2d956588fd67be5c16f8b9ce77f536eda8f2c1f64031bf284eae9a",
+        "record_count": 28000,
+        "scene_count": 34,
+        "split_counts": {
+          "test": 4000,
+          "train": 20000,
+          "val": 4000
+        }
+      },
+      {
+        "bytes": 12260136,
+        "dataset_manifest_hash": "fa65f2a18ecfba6eb972c9f6eeb4b5a637cb9aaae35926d40b0a480514a19e56",
+        "filename": "selection_manifest_seed01.jsonl",
+        "path": "artifacts/phase12_selection/selection_manifest_seed01.jsonl",
+        "raw_sha256": "501b3bb490137ceebc83fe3ae3e1b08153dadc74afeea9b707cd97da4e548a66",
+        "record_count": 28000,
+        "scene_count": 35,
+        "split_counts": {
+          "test": 4000,
+          "train": 20000,
+          "val": 4000
+        }
+      },
+      {
+        "bytes": 12257807,
+        "dataset_manifest_hash": "7f8864c3483999c5cd413ce3c60ac663b5ca0a89bcd08406ec81357b4c409e43",
+        "filename": "selection_manifest_seed02.jsonl",
+        "path": "artifacts/phase12_selection/selection_manifest_seed02.jsonl",
+        "raw_sha256": "e4919c49470c8ef89e77541baac9c46f37e0aeae4c278f577313a6e30c352687",
+        "record_count": 28000,
+        "scene_count": 43,
+        "split_counts": {
+          "test": 4000,
+          "train": 20000,
+          "val": 4000
+        }
+      },
+      {
+        "bytes": 12250253,
+        "dataset_manifest_hash": "02d11623c65a872146ebd8b6d46e10bcb82215a015e3eb83edc45dbbd7a91989",
+        "filename": "selection_manifest_seed03.jsonl",
+        "path": "artifacts/phase12_selection/selection_manifest_seed03.jsonl",
+        "raw_sha256": "2ffae65bdf067319de38e4f3a5b3e526285cd8f98949c5b0b7b238b8da33813c",
+        "record_count": 28000,
+        "scene_count": 44,
+        "split_counts": {
+          "test": 4000,
+          "train": 20000,
+          "val": 4000
+        }
+      },
+      {
+        "bytes": 12269392,
+        "dataset_manifest_hash": "51a70036b2c07b5c4fb2554b9a6504c8afba3b859d5fcef401a53b967f432f83",
+        "filename": "selection_manifest_seed04.jsonl",
+        "path": "artifacts/phase12_selection/selection_manifest_seed04.jsonl",
+        "raw_sha256": "aee2fcbff295e7bee3ca3b74078ee547bf47854f0e512caa39fd59479c8ba50a",
+        "record_count": 28000,
+        "scene_count": 42,
+        "split_counts": {
+          "test": 4000,
+          "train": 20000,
+          "val": 4000
+        }
+      },
+      {
+        "bytes": 12271297,
+        "dataset_manifest_hash": "ad58660b0430c613e1bfc036cf5b9ad7d80ff57a92c19ec11b755f2ebf0796aa",
+        "filename": "selection_manifest_seed05.jsonl",
+        "path": "artifacts/phase12_selection/selection_manifest_seed05.jsonl",
+        "raw_sha256": "63c2892a77da415a1b6750884d1c73e7cb3e1524348e5a365e6114c5457d8702",
+        "record_count": 28000,
+        "scene_count": 38,
+        "split_counts": {
+          "test": 4000,
+          "train": 20000,
+          "val": 4000
+        }
+      },
+      {
+        "bytes": 12263098,
+        "dataset_manifest_hash": "e7cab22c791830a82ed8b4ac816b014679963fbf96c08448f891be7b2e7dbf86",
+        "filename": "selection_manifest_seed06.jsonl",
+        "path": "artifacts/phase12_selection/selection_manifest_seed06.jsonl",
+        "raw_sha256": "cea61deb46c24cf5e88d97cbef7ae4664c6c92814f9d9b566ab27d7bb6fdb967",
+        "record_count": 28000,
+        "scene_count": 58,
+        "split_counts": {
+          "test": 4000,
+          "train": 20000,
+          "val": 4000
+        }
+      },
+      {
+        "bytes": 12250124,
+        "dataset_manifest_hash": "b2cf08398674867375d4556873688eb49518782c845a3138c5bb3287acd14d48",
+        "filename": "selection_manifest_seed07.jsonl",
+        "path": "artifacts/phase12_selection/selection_manifest_seed07.jsonl",
+        "raw_sha256": "bf9f7fa77a0e862410fc36979fa0c881bd8741063bbe07057585610bb75ec8cf",
+        "record_count": 28000,
+        "scene_count": 31,
+        "split_counts": {
+          "test": 4000,
+          "train": 20000,
+          "val": 4000
+        }
+      },
+      {
+        "bytes": 12280650,
+        "dataset_manifest_hash": "9d07f23f5fdc928ecda7b8c08b53a88374169fd0cf3367f6c595def326591dcb",
+        "filename": "selection_manifest_seed08.jsonl",
+        "path": "artifacts/phase12_selection/selection_manifest_seed08.jsonl",
+        "raw_sha256": "36adfd9b9bcc298e287a2a81c69731e475b3666ec46897e2b658aaa2e16bd764",
+        "record_count": 28000,
+        "scene_count": 39,
+        "split_counts": {
+          "test": 4000,
+          "train": 20000,
+          "val": 4000
+        }
+      },
+      {
+        "bytes": 12253391,
+        "dataset_manifest_hash": "121abdadb043d83143b44766e47a2c1c7a1446a549f903fa9452bc24058fb1f8",
+        "filename": "selection_manifest_seed09.jsonl",
+        "path": "artifacts/phase12_selection/selection_manifest_seed09.jsonl",
+        "raw_sha256": "b22d8cf72c5f4d990642640318415789f941ba263827e065ba7dbc3a38790aa1",
+        "record_count": 28000,
+        "scene_count": 53,
+        "split_counts": {
+          "test": 4000,
+          "train": 20000,
+          "val": 4000
+        }
+      },
+      {
+        "bytes": 12264103,
+        "dataset_manifest_hash": "fb4d8b4b024a17a842d351e9cfdbb3904648f1883406a5953a41449b375a7843",
+        "filename": "selection_manifest_seed10.jsonl",
+        "path": "artifacts/phase12_selection/selection_manifest_seed10.jsonl",
+        "raw_sha256": "b46b33d2dc604613570ab0d54aaf1665ea46e3becc3269a1526cadb691fad2e9",
+        "record_count": 28000,
+        "scene_count": 61,
+        "split_counts": {
+          "test": 4000,
+          "train": 20000,
+          "val": 4000
+        }
+      },
+      {
+        "bytes": 12277036,
+        "dataset_manifest_hash": "869aa217e6743fb60979a4b7f6af87012a4163ef7a959f571f7aa0dad1a71f45",
+        "filename": "selection_manifest_seed11.jsonl",
+        "path": "artifacts/phase12_selection/selection_manifest_seed11.jsonl",
+        "raw_sha256": "0298224506d7081598461ead3276e544bbe8fac8773da47218a3ff56b96663d4",
+        "record_count": 28000,
+        "scene_count": 68,
+        "split_counts": {
+          "test": 4000,
+          "train": 20000,
+          "val": 4000
+        }
+      },
+      {
+        "bytes": 12262158,
+        "dataset_manifest_hash": "5af5bc16cdd65624cd9ad0c5b20a026eaa42e69c0f76e47ca8f806f967d4d1ff",
+        "filename": "selection_manifest_seed12.jsonl",
+        "path": "artifacts/phase12_selection/selection_manifest_seed12.jsonl",
+        "raw_sha256": "973195e1bcee52ab7b941b19fad0cba6ab031d0d9114dae50f8d2ba66fc2b3d4",
+        "record_count": 28000,
+        "scene_count": 35,
+        "split_counts": {
+          "test": 4000,
+          "train": 20000,
+          "val": 4000
+        }
+      },
+      {
+        "bytes": 12242325,
+        "dataset_manifest_hash": "3360e839f910eb451f72da271a17d048a40a0db8c8a6f03e5a3c4099c44e0812",
+        "filename": "selection_manifest_seed13.jsonl",
+        "path": "artifacts/phase12_selection/selection_manifest_seed13.jsonl",
+        "raw_sha256": "792442f1e7626b61ab70c2879b6b2ea1669ca03ce7239adf5ceb8d02cb9a25d5",
+        "record_count": 28000,
+        "scene_count": 57,
+        "split_counts": {
+          "test": 4000,
+          "train": 20000,
+          "val": 4000
+        }
+      },
+      {
+        "bytes": 12246484,
+        "dataset_manifest_hash": "b440e8a8fad2889391a46c89d6f2edfed461fd34eeacfbc9c1ced62c981b76d1",
+        "filename": "selection_manifest_seed14.jsonl",
+        "path": "artifacts/phase12_selection/selection_manifest_seed14.jsonl",
+        "raw_sha256": "da3a634488cd32c93f35ad66546adc278cb08376ee38a9e1894d65107cea4f2d",
+        "record_count": 28000,
+        "scene_count": 48,
+        "split_counts": {
+          "test": 4000,
+          "train": 20000,
+          "val": 4000
+        }
+      },
+      {
+        "bytes": 12268187,
+        "dataset_manifest_hash": "75cb4e800768389523a9e408464e9d369891e52b461eb5a72c343d47495f2540",
+        "filename": "selection_manifest_seed15.jsonl",
+        "path": "artifacts/phase12_selection/selection_manifest_seed15.jsonl",
+        "raw_sha256": "09f082219adab3416c37cf252aaa1d434df6ddf595225eea28a27f30ae7bf691",
+        "record_count": 28000,
+        "scene_count": 47,
+        "split_counts": {
+          "test": 4000,
+          "train": 20000,
+          "val": 4000
+        }
+      },
+      {
+        "bytes": 12259123,
+        "dataset_manifest_hash": "9f841e81c4b9125b87de7fbe9b0d4acd00af8167e37b5c248643f919624e6c98",
+        "filename": "selection_manifest_seed16.jsonl",
+        "path": "artifacts/phase12_selection/selection_manifest_seed16.jsonl",
+        "raw_sha256": "de79a5e59a8dc2d5494708803dcd9f78d891cc71afaa9201cf0f395f3a7f98c2",
+        "record_count": 28000,
+        "scene_count": 39,
+        "split_counts": {
+          "test": 4000,
+          "train": 20000,
+          "val": 4000
+        }
+      },
+      {
+        "bytes": 12278034,
+        "dataset_manifest_hash": "0588d786e81e073b590f6ccc39466b2dce82afb686cbe428bda9143680fa7cfb",
+        "filename": "selection_manifest_seed17.jsonl",
+        "path": "artifacts/phase12_selection/selection_manifest_seed17.jsonl",
+        "raw_sha256": "1c1da5f6f369c339424c289705e9683e12e6cbe911b020d62ce9cec2bf41ee9a",
+        "record_count": 28000,
+        "scene_count": 50,
+        "split_counts": {
+          "test": 4000,
+          "train": 20000,
+          "val": 4000
+        }
+      },
+      {
+        "bytes": 12263445,
+        "dataset_manifest_hash": "5b4ff03fcebb7ba06ca0fb1fac7e4fbe58469ad53d171529e00d859ecbb595e9",
+        "filename": "selection_manifest_seed18.jsonl",
+        "path": "artifacts/phase12_selection/selection_manifest_seed18.jsonl",
+        "raw_sha256": "53620d0b046ec59cc47318a0ad71636ae159156f0fc042ef3f7f25b4a8e6fc75",
+        "record_count": 28000,
+        "scene_count": 36,
+        "split_counts": {
+          "test": 4000,
+          "train": 20000,
+          "val": 4000
+        }
+      },
+      {
+        "bytes": 12274423,
+        "dataset_manifest_hash": "222cfe600545713bcfe9d2df6386ee0c0ca708310e13809666e4e69e2391e97e",
+        "filename": "selection_manifest_seed19.jsonl",
+        "path": "artifacts/phase12_selection/selection_manifest_seed19.jsonl",
+        "raw_sha256": "c35c8e4486052c0b428c051c23669228704706fcaa6e49493215d09e551b66aa",
+        "record_count": 28000,
+        "scene_count": 56,
+        "split_counts": {
+          "test": 4000,
+          "train": 20000,
+          "val": 4000
+        }
+      }
+    ],
+    "method": "raw_sha256 = sha256 of the file bytes; dataset_manifest_hash = DatasetManifest.hash (sha256 over records sorted by (dataset_id, sample_id), order-independent); both recorded, never reimplemented",
+    "reframing": "The selection manifests carry a richer header than DatasetManifest.to_jsonl() emits (field_mapping, imagery, data_dir, ...), which only survives a round trip because read() stores them in `notes` and to_jsonl() re-emits them. A byte-exact re-serialisation is therefore NOT a portable property: it also depends on the writing platform's newline translation (the sources are CRLF; a POSIX writer emits LF, which would NOT match). Byte-stability is NOT asserted and NOT relied upon. The asserted, portable property is HASH-STABILITY: read(p).hash == header.hash, and read(p) -> to_jsonl() -> read() -> .hash is identical -- independent of header shape and of newline convention."
+  }
+}

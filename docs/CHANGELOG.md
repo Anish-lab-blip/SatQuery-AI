@@ -1,0 +1,621 @@
+# Changelog
+
+All notable changes to SatQuery AI. Dates are ISO-8601. This changelog records **what changed and what
+was verified**, and marks unresolved items honestly rather than omitting them. It follows the same
+no-fabrication rule as the rest of the documentation set: an item that is `NOT RUN` stays `NOT RUN`, a
+`REJECTED` verdict is never softened, and a negative result is reported as one.
+
+**Status tags:** `RESOLVED` · `OPEN` · `CLOSED` · `DEFERRED` · `REJECTED` · `NOT RUN` · `BLOCKED` ·
+`VERIFIED` · `MEASURED`.
+
+**Conventions.** Versions are the project's own release line, not the plan's phase numbers (owner
+decision D-5: the master plan's numbering is authoritative for *phases*; this changelog's numbering is
+the *release* line). Where an earlier statement in a linked document was later found wrong, the original
+is retained and a dated correction is appended — a retained-and-corrected record is more useful than a
+silently overwritten one (`docs/OWNER_DECISIONS_2026-09-23.md`, convention).
+
+**Related documents.** [`../MODEL_CARD.md`](../MODEL_CARD.md) · [`MODELS.md`](MODELS.md) ·
+[`BENCHMARKS.md`](BENCHMARKS.md) · [`TRAINING.md`](TRAINING.md) · [`EVALUATION.md`](EVALUATION.md) ·
+[`LIMITATIONS.md`](LIMITATIONS.md) · [`RESEARCH_NOTES.md`](RESEARCH_NOTES.md) ·
+[`ARCHITECTURE.md`](architecture/README.md).
+
+---
+
+## [1.0.0] — 2026-09-25 — Final documentation, model release and archival freeze
+
+The release that makes the project legible, citable and reproducible: repository documentation, a deep
+research/engineering documentation set, model documentation, a Hugging Face model release, a curated
+public repository, and a verified evidence archive.
+
+### Added
+
+**Repository documentation**
+
+- **Repository README** — 27 sections, from motivation through citation: the deployed topology, the six
+  supported tasks, routing, the eight execution events, measured results, live validation, and known
+  limitations. **All 20 quoted metrics were verified against their source artifacts** at the README's
+  printed precision (`release/tools/readme_metrics_report.txt` → `ALL CLAIMS VERIFIED`).
+- **Eight real screenshots** captured from the post-fix live run
+  (`release/repo/screenshots/`), each confirmed to show a live run (run id + config hash
+  `78f1e3700da15aa1` + specialist evidence), not a mock.
+
+**Deep architecture reference** (hub + 10 chapters)
+
+| Chapter | Topic |
+|---|---|
+| `docs/architecture/README.md` | hub: thesis, sub-document index, cross-cutting principles |
+| `docs/architecture/01-system-overview.md` | thesis, component inventory, frozen-backbone strategy |
+| `docs/architecture/02-deployment-topology.md` | four tiers, gateway, tunnel, wake flow, cold start |
+| `docs/architecture/03-request-lifecycle.md` | the nine-state controller, validation, tiling |
+| `docs/architecture/04-router.md` | frozen MiniLM, the 5-head adapter, `interpret()` vs `chooseTask()`, lexical fallback |
+| `docs/architecture/05-specialists.md` | all six tasks in depth |
+| `docs/architecture/06-evidence-and-confidence.md` | evidence aggregation, temperature scaling, the eight events |
+| `docs/architecture/07-configuration-freeze.md` | the registry, enforced invariants, the config hash |
+| `docs/architecture/08-api-contract.md` | the four endpoints, envelopes, error codes |
+| `docs/architecture/09-frontend.md` | the static pages, real-vs-preview, platform traps |
+| `docs/architecture/10-observability-and-ops.md` | health, counters, traces, what is not observed |
+
+**Research documentation** — `MODELS.md`, `BENCHMARKS.md`, `DATASETS.md`, `TRAINING.md`,
+`EVALUATION.md`, `DEPLOYMENT.md`, `REPRODUCIBILITY.md`, `LIMITATIONS.md`, `RESEARCH_NOTES.md`,
+`CHANGELOG.md`.
+
+**Extended engineering-documentation set** (added in the same release, deep-reference depth):
+
+`SECURITY.md`, `TESTING.md`, `GEOSPATIAL.md`, `DATA_PIPELINE.md`, `OPERATIONS.md`, `DEVELOPMENT.md`,
+`PERFORMANCE.md`, `GLOSSARY.md`, `FRONTEND.md`, `SERVING.md`. See the
+[complete documentation inventory](#documentation-inventory-shipped-in-100) below.
+
+**Model documentation**
+
+- **`MODEL_CARD.md`** — the Hugging Face model card, expanded to deep-reference depth in this pass: an
+  overview; the six-artifact table with byte counts and full sha256; backbone dependencies with pinned
+  revisions; intended and out-of-scope use; a per-artifact section (architecture, hyperparameters,
+  training data, evaluation protocol, measured numbers, acceptance status, limitations) for each of the
+  six artifacts; the full measured-performance table; the calibration negative result; the
+  acceptance-status table; the evaluation gaps; the limitations; a training summary; provenance and
+  verification; licence; and citation. Retains its YAML frontmatter (`license: other`, tags,
+  `pipeline_tag: image-to-text`, `config_hash: 78f1e3700da15aa1`).
+- **`models/manifest.json`** and **`models/checksums.sha256`** — **generated by reading the files**
+  (`release/tools/generate_model_manifest.py`), never typed by hand. Six artifacts, each with
+  `status: "PRESENT"` and the frozen config hash. Two digests (`change_vqa`, `vlm`) **agree exactly**
+  with values recorded independently at promotion/fit time — an external cross-check, not a
+  self-consistency claim.
+
+**Metric verification tooling**
+
+- **`release/tools/verify_readme_metrics.py`** — walks every quoted metric to its source artifact and
+  the exact key path inside it. Result: **`ALL CLAIMS VERIFIED`** (20/20), plus status assertions (VLM
+  headline contains `ACCEPTANCE-REJECTED`; router `corpus_limited` with `n_val` 86; calibration
+  `ece_improvement` negative). Output committed as `release/tools/readme_metrics_report.txt`.
+
+**Release**
+
+- **Hugging Face release** of the six trained artifacts to `thundercode/SatQuery` (public), with a
+  verification record ([`../HF_RELEASE_VERIFICATION.md`](../HF_RELEASE_VERIFICATION.md)). Independent
+  re-download over direct HTTPS confirmed **6/6 artifacts byte-identical**, 0 failed. Total released
+  weight payload **131,130,325 bytes (~125 MiB)**; **no backbone weights are redistributed**.
+- **Curated public repository** target `Anish-lab-blip/SatQuery-AI`, with
+  [`../RELEASE_MANIFEST.md`](../RELEASE_MANIFEST.md) (42 files, 8,401,031 bytes, each with size and
+  sha256, generated from disk).
+- **Evidence archive** — scope set by owner decision G3 (`artifacts/` verbatim, ~3.7 GB, requiring
+  ZIP64), with an integrity-verified extraction and a documented remote location (owner decision G2:
+  Hugging Face Hub).
+
+**This pass (documentation depth)**
+
+- **`MODEL_CARD.md` expanded in place** to deep-reference depth (see Model documentation above).
+- **`CHANGELOG.md` expanded in place** — the full 1.0.0 entry, the earlier version entries (0.9.0 →
+  0.1.0), an Unreleased/Open section, and the **complete documentation inventory** below.
+
+### Changed
+
+- The monorepo `README.md` was **materially stale** and is superseded by this release's README. The
+  stale version called the frontend "hermetic — no backend calls", put Render/Codespace as
+  "in progress", described a `/v1/*` contract, and pointed at the untracked `deploy/` as the deployment
+  source. **All four were wrong.**
+- `hf/` documentation was **stale** — it asserted the project "does not own any model weights … ships no
+  weights, no binaries, and no large artifacts" and "has no Hugging Face credentials". **Both were false
+  at release time** and are corrected.
+- **Documentation set expanded.** Ten new deep-reference docs were added after `RELEASE_MANIFEST.md` and
+  the Hugging Face upload were generated. **Consequence, stated plainly:** the release manifest (42
+  files) and the Hub's 26 markdown files **do not yet include** those ten documents. The manifest and the
+  Hub listing are therefore **stale relative to the local release tree** and must be regenerated /
+  re-uploaded before they can be treated as authoritative. See
+  [the inventory](#documentation-inventory-shipped-in-100).
+
+### Fixed
+
+- **Router defect** — *"Where are the built-up areas in this image?"* collapsed to `vqa` and answered
+  "River". Fixed in the dispatch path and validated across three independent live passes (8/8 each).
+  `RESOLVED`. (Details in 0.9.0.)
+- **Live-validation harness false positive** — synthetic CDP key events were silently dropped when the
+  window lacked OS focus, so the harness dispatched the page's default query and recorded a false pass.
+  Fixed with pre-dispatch form-state assertions (`q_ok`, `obs_ok`, `t0_ok`). `RESOLVED`.
+- **Bundled EO change pair** — the demo pair differed in shape (726² vs 736²) and errored
+  (`T1 and T2 must have the same shape`). Replaced with a same-shape pair (both 720×720). `RESOLVED`
+  (supersedes `docs/FINAL_DELIVERY_REPORT.md` §6).
+- **B-01 (Hugging Face header link)** — previously `BLOCKED`; the link is now live on all 11 pages.
+  `CLOSED`.
+- **Metric-verifier dotted-path bug** — the resolver split the artifact key `"0.50"` on its own dot,
+  producing a false `NOKEY` for the two grounding recall claims. Fixed to prefer the **longest**
+  matching key at each step. `RESOLVED`.
+
+### Known issues at this release
+
+- **B-07** — transient tunnel-agent gaps; a request can hang or return 504. Patch prepared, **NOT
+  deployed**. `OPEN`.
+- **B-02** — `/api/health` `codespace_name` carries a trailing `\n`. Cosmetic; the wake path strips it.
+  `OPEN`.
+- **No `LICENSE` file** exists in the source repository. `OPEN`.
+- **No system-level end-to-end benchmark** exists. `NOT RUN`.
+- **Router test split** never scored. `NOT RUN`.
+- **Calibration** worsened ECE (0.013755 → 0.014929). Retained as part of the frozen config only.
+- **VLM adapter** is `ACCEPTANCE-REJECTED` despite usable metrics (exact_match 0.963, F1 0.96432); the
+  deployed path uses the unadapted model.
+- **optical-SAR** and **change-VQA** rulings remain `OPEN`.
+- **GitHub push** — at the time of `release/RELEASE_EXECUTION_CHECKLIST.md` Phase 5 the push to
+  `Anish-lab-blip/SatQuery-AI` was `BLOCKED` (`403 Resource not accessible by personal access token`;
+  the token was read-only for repository contents). Owner action.
+- **Release manifest / Hub doc set** stale relative to the ten new deep docs (see *Changed*).
+
+### Deployment revisions at this release
+
+| Component | Revision |
+|---|---|
+| Frontend | `2d7ae53b482d` |
+| Backend | `89d80eaddec5` |
+| Inference | `5a0936ace491` |
+| Public umbrella | `3dcabd32da41` |
+
+**Live validation.** 3 passes × 8 cases, **8/8 each**, **24 live runs, 24 correct dispatches, 0 mock
+nodes**, trace fill **94.4444 %**. Representative real run ids: vqa `run_ddf81a1c3871`, caption
+`run_15d7b9ecf594`, grounding `run_d124d8b9adea` (3 regions, calibrated 0.52), change
+`run_c6249437253d`, optical_sar `run_028b200fb710` (`docs/FINAL_DELIVERY_REPORT.md` §4).
+
+### The six released artifacts at this release
+
+Generated identities from [`../models/manifest.json`](../models/manifest.json); see
+[`../MODEL_CARD.md`](../MODEL_CARD.md) §3 for the full table with source paths and cross-checks.
+
+| Task | Kind | File | Bytes | sha256 (full) |
+|---|---|---|---|---|
+| `change` | trained head | `change/head.pt` | 63,231,009 | `c5ef31277b67aa01a593aec0eac503eeaccc6d674349fda20ca44c9cc6f8e9fa` |
+| `change_vqa` | trained head | `change_vqa/head.pt` | 5,822,809 | `cfae5e43b97ca930f568dc5b8ae4f36b24e9ff717af226159802206ffd63a82a` |
+| `optical_sar` | trained head | `optical_sar/head.pt` | 14,427,457 | `785815729a3a39fc34dc41894efaf00d8739365d970a3f830a326e68ae888dab` |
+| `grounding` | trained head | `grounding/head.pt` | 12,639,041 | `93432f7034be91a8ffd9c1a84e3eeec00bed7832c043fe7f83d2be230284c6bb` |
+| `router` | trained adapter | `router/adapter.pt` | 211,961 | `8527c3ed28a293e13293d48601d48e3ceafa137b9acabddaf5de31a58a509b5c` |
+| `vlm` | LoRA adapter | `vlm/adapter_model.safetensors` | 34,798,048 | `07c76a75fa04624880ed7730590f5fdd7b145a8232e3c0af411c3c545a5adf5e` |
+
+Every digest above is copied from [`../models/manifest.json`](../models/manifest.json); consult the
+manifest, which wins over any hand-typed copy.
+
+Total released weight payload: **131,130,325 bytes (~125 MiB)**. No backbone weights are redistributed.
+
+### Measured results at this release
+
+Every row names its source artifact; all 20 numeric claims are checked by
+`release/tools/verify_readme_metrics.py` (`ALL CLAIMS VERIFIED`). The full annotated version is
+[`../MODEL_CARD.md`](../MODEL_CARD.md) §8 and [`BENCHMARKS.md`](BENCHMARKS.md) §1.
+
+| Capability | Metric | Value | Split / protocol | n | Status |
+|---|---|---|---|---|---|
+| Change | pooled IoU / macro IoU / pooled F1 | **0.8122 / 0.8457 / 0.8964** | LEVIR-CD-256 test, thr 0.50 | 2,048 | **VERIFIED** |
+| Grounding | mean best IoU / recall@0.5 | **0.2838 / 0.2198** (canonical); **0.2566 / 0.1938** (matched6) | VRSBench | 16,159 | MEASURED (2 protocols) |
+| Grounding | head-argmax / zero-shot IoU | **0.1215 / 0.0972** | canonical | 16,159 | MEASURED |
+| Optical-SAR | accuracy / macro-F1 | **0.931 / 0.434161** | held-out test, 19 classes | 4,000 | MEASURED, ruling **OPEN** |
+| Change-VQA | accuracy / macro-F1 | **0.697626 / 0.378373** (test); **0.651469 / 0.372309** (test2) | two test sets | 39,686 / 31,036 | MEASURED, ruling **OPEN** |
+| VLM (adapted) | exact_match / F1 | **0.963 / 0.96432** | frozen 1,000-question subset | 1,000 | **ACCEPTANCE-REJECTED** |
+| Router | overall **ungated** accuracy | **0.965116** | val, corpus-limited | 86 | MEASURED — **TEST NOT RUN** |
+| Calibration | ECE before → after | **0.013755 → 0.014929** | val, T = 0.9773 | 16,441 | MEASURED — **worse** |
+| System | end-to-end accuracy | — | — | — | **NOT RUN — none exists** |
+
+### Status of every claim at this release
+
+The facts most likely to be misstated, and their correct form. These are the same statements the release
+README, the model card and the benchmark doc carry; they are repeated here so a reader of the changelog
+alone cannot misread the release.
+
+| Fact | Correct statement | Never say |
+|---|---|---|
+| Grounding | two protocols **and** two decode variants: canonical 0.2838/0.2198, matched6 0.2566/0.1938, head_argmax 0.1215, zero-shot 0.0972 | "grounding is 0.28" |
+| Calibration | ECE **worsened** 0.013755 → 0.014929; retained only because it is in the frozen config | "calibration improved confidence" |
+| VLM adapter | metrics usable, status **ACCEPTANCE-REJECTED**; deployed path uses the unadapted model | "the VLM is accepted" / "the VLM is broken" |
+| Optical-SAR | accuracy **0.931 always with macro-F1 0.434161**; ruling `OPEN`; single-label subset only | "0.931 accuracy" alone |
+| Change-VQA | **two** test sets, both quoted; ruling `OPEN` | "change-VQA is 0.70" |
+| Router | **0.965116 is validation, ungated, n = 86**; test `NOT RUN` | "router test accuracy" |
+| End-to-end | no system-level benchmark exists; none is claimed | any end-to-end accuracy |
+| Change | pooled IoU 0.8122 / macro IoU 0.8457 / pooled F1 0.8964 — the only `VERIFIED` headline | treating it as system-level |
+
+### Verification and reproduction at this release
+
+```bash
+# 1. Verify every quoted metric against its source artifact  (cheap, no GPU)
+python release/tools/verify_readme_metrics.py
+#    -> STATUS ... MATCH ... / RESULT: ALL CLAIMS VERIFIED
+
+# 2. Verify the released artifact identities
+sha256sum -c models/checksums.sha256
+#    -> change/head.pt: OK  ... vlm/adapter_model.safetensors: OK
+
+# 3. Re-download and re-hash the Hugging Face release (independent of the upload step)
+python release/tools/hf_verify.py
+#    -> artifacts verified : 6 / artifacts failed : 0
+
+# 4. Regenerate the artifact manifest from disk (must not change any value)
+python release/tools/generate_model_manifest.py
+```
+
+`release/tools/readme_metrics_report.txt` and `release/tools/hf_verify_report.txt` are the committed
+outputs of steps 1 and 3.
+
+### Compatibility and migration notes
+
+- **Frozen config hash.** `78f1e3700da15aa1` is the sha256 of `configs/base.yaml` truncated to 16
+  characters. Every artifact records it. Editing the registry moves the hash and detaches every
+  published number from its configuration — new defaults therefore live in **code** (e.g.
+  `DEFAULT_HEAD_PATH`), not in `base.yaml` (owner decision D-4). A test
+  (`test_the_frozen_config_hash_has_not_moved`) pins this.
+- **Grounding default semantics changed.** `head_path = None` **no longer means "no head"** — it now
+  means *"use the shipped head if present."* An explicit `head_path` still wins. Any caller that relied
+  on `None` meaning "disable the head" must now pass a path that does not resolve (D-4).
+- **VLM adapter opt-in.** The Phase 6 adapter is attached only when the `SATQUERY_VLM_ADAPTER`
+  environment variable (or an explicit `adapter_path` argument) is set. It is **not** the deployed
+  default.
+- **`optical_sar` capability reporting.** `/api/capabilities` keeps `available = false` for
+  `optical_sar` even though the capability is locally executable — the under-report is a statement about
+  *deployment certification*, not about code, and two tests pin it (owner decision D-7).
+- **Phase numbering.** The master plan's numbering is authoritative for phases; the repository's
+  historical numbering is retained as history with a mapping (`docs/PHASE_NUMBERING_MAP.md`). This
+  changelog's version numbers are the *release* line, independent of both (D-5).
+
+---
+
+## [0.9.0] — 2026-09-25 — Router-defect sprint
+
+### The defect
+
+Two functions with different information:
+
+- **`interpret()`** — produces the console's *reading*; **asset-count-blind** (text only).
+- **`chooseTask()`** — performs *dispatch*; **asset-count-aware**.
+
+*"Where are the built-up areas in this image?"* collapsed to **`vqa`** and answered **"River"** instead
+of routing to `grounding`; *"Where is the new airport?"* behaved the same way. The defect was in the
+dispatch path's handling of spatial/lexical cues, so region queries fell through to the generic VQA
+specialist.
+
+### The fix
+
+- The temporal slot in `interpret()` now derives from `changeStem` / `pairWording` / `newAsChange`.
+- `built` was dropped as a change marker.
+- The quantifier `area` was tightened to `\barea\b`.
+
+### Verification
+
+Three commits deployed to the frontend; **3 independent live validation passes**, 8/8 each — **24 live
+runs, 24 correct dispatches, 0 mock nodes, trace fill 94.4444 %**.
+
+| Pass | Deployed HEAD | Result |
+|---|---|---|
+| 1 | `ff46eba42b18` + `d413d3672311` | 8/8 |
+| 2 | `2d7ae53b482d` | 8/8 |
+| 3 | `2d7ae53b482d` | 8/8 |
+
+Both defect queries now dispatch to `grounding`:
+
+| Query | Run id | Dispatched |
+|---|---|---|
+| Where are the built-up areas in this image? | `run_467ffa406f22` | `grounding` |
+| Where is the new airport? | `run_46980ba55c62` | `grounding` |
+
+### Harness false positive — caught before it could lie
+
+An earlier live-validation harness typed queries with **synthetic CDP key events**, which Chrome
+**silently drops when the window lacks OS focus**. The harness therefore dispatched the page's *default*
+query and still recorded a "result" — a **false pass**. Fixed by asserting form state before dispatch
+(`q_ok`, `obs_ok`, `t0_ok`) and using deterministic query entry (a `js()` value-set plus `type_text()`
+via CDP `Input.insertText`). The earlier 8/8 run was re-examined and confirmed **not** infected — its
+answers were query-specific and the query text was embedded in the answers.
+
+### Also in this sprint
+
+- Wrote the delivery report and the handoff.
+- Prepared (but did **not** deploy) the B-07 backend patch: it adds `forward_unavailable` (503) and
+  `upstream_timeout` (504) codes plus the `codespace_name` `.strip()` fix; verified `py_compile` clean.
+  **Status: `OPEN` — prepared, NOT deployed.**
+
+`RESOLVED` for the router defect and the harness bug. Root cause and lessons recorded in
+[`RESEARCH_NOTES.md`](RESEARCH_NOTES.md) §3–§4.
+
+---
+
+## [0.8.0] — 2026-09-24/25 — Deployment hardening
+
+### Topology settled
+
+```
+Browser → Cloudflare Pages (satquery.pages.dev)
+        → Render hub (satquery-orchestrator)
+        → outbound TUNNEL (/tunnel/agent long-poll)
+        → GitHub Codespace (FastAPI inference, CPU)
+        → models (change · change_vqa · optical_sar fusion · grounding · VLM/CROMA)
+        → real ResultEnvelope → Render → browser
+```
+
+The tunnel exists because a forwarded Codespace port on a **private** repo returns `302`. Deploy sources
+are three private repositories; the local `deploy/` is stale/untracked and is **not** the deployed
+source.
+
+### The five historical backend blockers — closed
+
+1. ASGI stack present in `requirements`;
+2. `$PORT` read;
+3. `OPTIONS` preflight handled;
+4. fail-fast app construction;
+5. adapter integrity compared against an expected digest.
+
+### Live topology verification (probed, not asserted)
+
+| Probe | Result |
+|---|---|
+| `GET /api/health` | 200, `agent_connected: true` |
+| `GET /api/capabilities` | 200, six tasks each `available: true` |
+| `POST /api/infer {}` | 422 `invalid_request` |
+| response header | `x-satquery-transport: tunnel` |
+
+### Behaviour recorded (not fixed, because it is not a defect)
+
+- **Cold start** is tens of seconds; the Render free tier sleeps and the Codespace may be stopped.
+- **`transport_mode: auto` fallthrough** — in `auto` mode a tunnel timeout falls through to the forward
+  path, burning `wake_timeout_s` (120 s) on a `302`; worst case ≈ **249 s** (150 + 120). Measured. This
+  is the root shape of B-07 (`OPEN`).
+
+`RESOLVED` for the five blockers; the `auto` fallthrough is documented and carried forward.
+
+---
+
+## [0.7.0] — Grounding and change heads
+
+### Grounding — resolution frozen at 224
+
+Trainable head over frozen RemoteCLIP ViT-B/32. **224 chosen, 448 REJECTED** by a pre-registered paired
+test over all 16,159 VRSBench eval records: mean best IoU −0.0147, recall@0.5 −0.0022, recall@0.10
+−0.0699, recall@0.25 −0.0243, at **1.59×** the latency; paired 95 % CI [−0.0160, −0.0134],
+**t = −22.63**; 448 better on 8.5 %, worse on **20.9 %** of records. The pre-registered rule and the
+paired test **agree** on 224, and the artifact records
+`rule_changed_since_preregistration: false`. `RESOLVED`. Evidence:
+`docs/PHASE7_RESOLUTION_DECISION.md`.
+
+Head design: per-cell feature `concat([patch, text, patch*text, global_pool]) = 4 × 512 = 2048`;
+cell-relative (YOLO-style) boxes; exactly one positive cell per target (the one containing the
+ground-truth box centre); `positive_confidence_weight: 20.0` to stop the 1-of-49 objectness collapse.
+
+### Change — the only VERIFIED headline
+
+STANet-style Siamese detector on LEVIR-CD-256 (`train 7,120 / val 1,024 / test 2,048`), ResNet-18 + PAM,
+tile 256, threshold 0.50. Measured on the held-out test split (n = 2048): **pooled IoU 0.8122 / macro
+IoU 0.8457 / pooled F1 0.8964** — the only headline in the project carrying the `VERIFIED` tag.
+
+### Optical-SAR — measured, ruling OPEN
+
+CROMA-base fusion head (`2318 → 512 → 19`), mandatory channel/band dropout, availability mask consumed
+by the head (not CROMA). Sweep: **10 runs × 2 arms × seeds 100–104**. Arm decision on
+`best_val_accuracy`: A 0.837100 vs B 0.839100, floor 0.0285 → **Arm A retained** (owner ruling R-14).
+Pre-registered 115-class metric on the held-out split (n = 4,000): **accuracy 0.931 / macro-F1
+0.434161**, ruling `OPEN`. The 224 localisation floor for zero-shot grounding is **1/7 of image width
+per token**, documented as a known limitation.
+
+---
+
+## [0.6.0] — VLM adaptation
+
+### Training
+
+SmolVLM-500M LoRA adapter (PEFT, `r = 16`, `alpha = 32`, `dropout = 0.05`, fp16; **224** target modules
+across `q/k/v/o/gate/up/down_proj`, all inside `model.text_model`; **8,683,520** trainable params =
+**1.6823 %** of the 516,165,824-param base; seed 42). The **vision tower was left untouched**
+(`trainable_subtrees = {"model.text_model": 8683520}`; the 86,433,024-param vision model and the
+11,796,480-param connector are in `frozen_params`).
+
+### Metrics usable, artifact REJECTED
+
+Adapted exact_match **0.963**, F1 **0.96432**, aggregate test delta **+49.50 pp** (46.80 → 96.30). But
+the pre-registered rule **v002** passes V1 and fails its **V2** per-class guardrail on the independent
+test split: class *Mixed forest* (`n = 33`) drops **12.1212 pp** with `lost_questions 4`, `z 2.1335` —
+failing **both** halves of v002. Per item V, a complete run that fails V2 is `REJECTED`.
+
+Both rejection records are preserved (Run 1's own manifest under v001 on val; the test-split
+adjudication under v002 on test); the val-split `ACCEPTED` under v002 is recorded **for completeness
+only** and is not final acceptance — it decides on the same val subset that motivated v002.
+
+### Findings
+
+- **F5-1** — `AutoModelForVision2Seq` **does not exist** in transformers 5.17.0 (not merely deprecated);
+  the loader class is resolved by feature detection over `("AutoModelForImageTextToText",
+  "AutoModelForVision2Seq", "AutoModelForMultimodalLM")`.
+- **F5-2** — the processor's default `longest_edge` is 2048, which upscales a 512-px tile 4× and then
+  splits it into **17** sub-images and 1142 prompt tokens. The plan estimated a 4× cost overrun; the real
+  figure is **~17×**. `processor_longest_edge` is pinned to 512 and enforced at config load.
+- **F5-3** — SmolVLM requires one `<image>` token per image; hand-written prompt strings raise
+  `ValueError`, so prompts are always built through `processor.apply_chat_template()`.
+
+### Closure
+
+Phase 6 closed **without retraining or modifying** the adapter. Evidence:
+`artifacts/vlm/phase6_closure.json`, `docs/PHASE6_CLOSURE.md`. Two traps recorded: `adapter_sha256` names
+a **tree hash** (`5c6b8631…`) and a **file** sha256 (`07c76a75…`), which are not interchangeable; and the
+promoted adapter is **not** `checkpoint-2000`.
+
+---
+
+## [0.5.0] — Router
+
+### Architecture
+
+A 50,822-parameter five-head adapter over frozen MiniLM embeddings (`router/adapter.py`): `LayerNorm →
+Linear(384 → 128) → GELU → Dropout(0.10)`, then `task_head (→6)`, `modality_head (→4)` and three binary
+heads `temporal`/`spatial`/`language` (each `→1` logit). Heads use small-std init (`std 0.02`, zero
+bias) so the initial sigmoid sits near 0.5. The adapter does **not** back-propagate into MiniLM.
+
+### Training
+
+Encoder frozen ⇒ embeddings cached ⇒ **CPU-only training**. Measured: **20 epochs over 4,096 × 384
+vectors in 0.28 s**. Config: 60 epochs, batch 64, lr 0.001, weight decay 0.01; loss weights task 1.0 /
+modality 0.3 / binary 0.5; `val_ratio` 0.15; `hard_negatives_to_test: true`.
+
+### Data and splits
+
+A synthetic query corpus: **576** queries in **54** groups, split `train 410 / val 86 / test 80`. Splits
+are **by group** (template / hard-negative family), never by example, so template variants cannot leak
+across the boundary (finding F4-3). Hard-negative families are placed in the **test** split so their
+accuracy measures generalisation, not memorisation.
+
+### Validation-only threshold sweep
+
+50 thresholds `0.50 … 0.99`, `select_by: covered_accuracy`. Shipped threshold **0.70** (coverage
+0.848837, covered accuracy 0.972603, fallback 0.151163, n_covered 73); the sweep's selected row is
+threshold 0.76 (coverage 0.790698, covered accuracy 1.0, n_covered 68). Overall **ungated** accuracy
+**0.965116** on **val n = 86** — corpus-limited (plan minimum 500 val queries, 100 hard negatives; val
+carries 0 hard negatives by design). **Test split NOT RUN** (`test_split_touched: false`).
+
+### Deterministic fallback
+
+A lexical fallback with ordered precedence and a `self_check()` against curated hard negatives, so the
+router degrades to a deterministic rule rather than to an arbitrary class when the adapter is
+low-confidence.
+
+---
+
+## [0.1.0] — Foundation
+
+- Monorepo; frozen configuration registry (`configs/base.yaml`); **config-hash freeze**
+  (`78f1e3700da15aa1`); **nine-state controller** (`RECEIVE → PARSE → VALIDATE → PLAN → PREPROCESS →
+  EXECUTE → AGGREGATE → VERIFY → RESPOND`); **four-endpoint** inference contract; evidence schema
+  (`Region` / `ChangeRegion` / `Evidence`, `max_items` 32, coordinate system `normalized_0_1`); **eight
+  frontend execution events**.
+- Enforced invariants established at load time: fusion width `3 × 768 + 12 + 2 = 2318`; grounding head
+  feature `4 × 512 = 2048`; CROMA `image_resolution % 8 == 0` (native 120 → 225 patches); router
+  `max_length ≤ 256`; VLM `processor_longest_edge ≤ image.tile_size`; change tile 256; VLM
+  `prompt_must_use_chat_template: true`.
+- Input geometry and normalisation frozen: `image.max_pixels` 25,000,000; `tile_size` 512;
+  `tile_overlap` 128; `max_tiles` 64; `top_k_tiles` 4. Optical percentile 2–98; SAR dB clip [−30, 5].
+- The rule that shaped every later decision: **"no magic numbers anywhere in Python; everything tunable
+  lives here"** — and, from the outset, the no-fabrication rule that a missing dependency, corpus or
+  checkpoint produces a diagnosable error, never a plausible number.
+
+---
+
+## Unreleased / open
+
+| Item | State |
+|---|---|
+| Deploy the B-07 tunnel-fallthrough fix | prepared, **NOT deployed** |
+| Score the router test split | **NOT RUN** |
+| Build a system-level end-to-end benchmark | **NOT RUN** |
+| Select a licence | **OPEN** |
+| Resolve the optical-SAR and change-VQA rulings | **OPEN** |
+| Plot the calibrated reliability curve | **NOT RUN** |
+| Replace the illustrative benchmark adapter numbers with real runs | **NOT RUN** |
+| Regenerate `RELEASE_MANIFEST.md` and re-upload the ten new deep docs to the Hub | **NOT RUN** |
+| Push the curated release to `Anish-lab-blip/SatQuery-AI` (token scope) | **BLOCKED** — owner action |
+| Fix B-02 (`codespace_name` trailing newline) | **OPEN** (cosmetic) |
+| Cross-dataset, human, robustness and adversarial evaluation | **NOT RUN** |
+
+---
+
+## Documentation inventory shipped in 1.0.0
+
+**Every documentation file in the release tree.** Sizes are the measured byte counts in
+`release/repo/`, as of the 2026-09-26 documentation pass. The **"in manifest / Hub"** column records
+whether the file was included in `RELEASE_MANIFEST.md` and the Hugging Face upload — the ten newest deep
+docs were written **after** both were generated, so they are present locally but **not yet** in the
+manifest or on the Hub.
+
+### Root-level documents
+
+| File | Purpose | Bytes | In manifest / Hub |
+|---|---|---|---|
+| `README.md` | repository front page (27 sections) | 86,336 | yes |
+| `MODEL_CARD.md` | model card for the six trained artifacts (Hugging Face card) | 57,166 | yes (previous revision; **expanded in this pass**) |
+| `RELEASE_MANIFEST.md` | every released file with size + sha256 | 10,402 | yes |
+| `HF_RELEASE_VERIFICATION.md` | independent HF re-download verification (6/6 MATCH) | 6,443 | yes |
+
+### Research and engineering documents (`docs/`)
+
+| File | Purpose | Bytes | In manifest / Hub |
+|---|---|---|---|
+| `docs/architecture/README.md` | architecture hub: thesis, sub-document index, cross-cutting principles | 7,672 | yes |
+| `docs/MODELS.md` | per-model detail: hyperparameters, acceptance status, measured params | 103,145 | yes |
+| `docs/BENCHMARKS.md` | every measured metric with its artifact and protocol | 55,999 | yes |
+| `docs/DATASETS.md` | dataset provenance, splits, leakage controls | 67,723 | yes |
+| `docs/TRAINING.md` | training procedures and hyperparameters | 90,697 | yes |
+| `docs/EVALUATION.md` | evaluation protocols and honesty rules | 111,672 | yes |
+| `docs/DEPLOYMENT.md` | live topology, env vars, mechanics, traps | 16,041 | yes |
+| `docs/REPRODUCIBILITY.md` | what can and cannot be reproduced | 65,200 | yes |
+| `docs/LIMITATIONS.md` | the full limitation catalogue | 8,356 | yes |
+| `docs/RESEARCH_NOTES.md` | engineering findings and negative results | 11,513 | yes |
+| `docs/CHANGELOG.md` | this file | *(this file)* | yes (previous revision; **expanded in this pass**) |
+| `docs/MASTER_ARCHITECTURE_PLAN.md` | the original master plan, included as a historical document | 65,304 | yes |
+| `docs/SECURITY.md` | security posture, trust boundaries, rate limiting, secrets hygiene | 114,342 | **no — new** |
+| `docs/TESTING.md` | the test suites, guards, and what is not covered | 96,897 | **no — new** |
+| `docs/GEOSPATIAL.md` | CRS, transforms, alignment, coordinate systems | 92,888 | **no — new** |
+| `docs/DATA_PIPELINE.md` | ingestion, extraction, feature caches, split policy | 66,285 | **no — new** |
+| `docs/OPERATIONS.md` | running the system: health, counters, traces, runbooks | 62,277 | **no — new** |
+| `docs/DEVELOPMENT.md` | local development, invariants, contribution mechanics | 69,367 | **no — new** |
+| `docs/PERFORMANCE.md` | latency, memory, throughput, cost notes | 52,946 | **no — new** |
+| `docs/GLOSSARY.md` | terms, abbreviations, status vocabulary | 40,998 | **no — new** |
+| `docs/FRONTEND.md` | the static frontend: pages, real-vs-preview, platform traps | 73,926 | **no — new** |
+| `docs/SERVING.md` | the serving path: endpoints, envelopes, error codes, wiring | 75,797 | **no — new** |
+
+### Architecture reference (`docs/architecture/`)
+
+| File | Topic | Bytes | In manifest / Hub |
+|---|---|---|---|
+| `docs/architecture/01-system-overview.md` | thesis, component inventory, frozen-backbone strategy | 8,376 | yes |
+| `docs/architecture/02-deployment-topology.md` | four tiers, gateway, tunnel, wake flow, cold start | 85,979 | yes |
+| `docs/architecture/03-request-lifecycle.md` | the nine-state controller, validation, tiling | 130,175 | yes |
+| `docs/architecture/04-router.md` | frozen MiniLM, the 5-head adapter, `interpret()` vs `chooseTask()` | 262,652 | yes |
+| `docs/architecture/05-specialists.md` | all six tasks in depth | 252,171 | yes |
+| `docs/architecture/06-evidence-and-confidence.md` | evidence aggregation, temperature scaling, the eight events | 108,044 | yes |
+| `docs/architecture/07-configuration-freeze.md` | the registry, enforced invariants, the config hash | 106,023 | yes |
+| `docs/architecture/08-api-contract.md` | the four endpoints, envelopes, error codes | 127,341 | yes |
+| `docs/architecture/09-frontend.md` | the static pages, real-vs-preview, platform traps | 78,287 | yes |
+| `docs/architecture/10-observability-and-ops.md` | health, counters, traces, what is not observed | 104,695 | yes |
+
+### Generated artifacts and tooling
+
+| File | Purpose | Bytes | In manifest / Hub |
+|---|---|---|---|
+| `models/manifest.json` | generated manifest of the six trained artifacts (bytes + sha256) | 4,458 | yes |
+| `models/checksums.sha256` | generated checksums, keyed by repository path | 642 | yes |
+| `tools/verify_readme_metrics.py` | walks every quoted metric to its source artifact | 6,911 | yes |
+| `tools/readme_metrics_report.txt` | its output (`ALL CLAIMS VERIFIED`) | 4,027 | yes |
+| `tools/generate_model_manifest.py` | generates `models/manifest.json` + `checksums.sha256` from disk | 6,868 | yes |
+| `tools/generate_release_manifest.py` | generates `RELEASE_MANIFEST.md` from disk | 4,100 | yes |
+| `tools/hf_verify.py` | re-downloads and re-hashes the released artifacts | 3,878 | yes |
+| `tools/verify_archive.py` | verifies the evidence archive extraction | 4,946 | yes |
+| `tools/build_archive.py` | builds the ZIP64 evidence archive | 8,351 | yes |
+
+**Inventory totals.** 4 root-level documents · 22 documents in `docs/` · 10 architecture chapters ·
+9 generated-artifact / tooling files. **45 files.** The ten newest deep docs (`SECURITY.md`,
+`TESTING.md`, `GEOSPATIAL.md`, `DATA_PIPELINE.md`, `OPERATIONS.md`, `DEVELOPMENT.md`, `PERFORMANCE.md`,
+`GLOSSARY.md`, `FRONTEND.md`, `SERVING.md`) are the only ones not yet reflected in
+`RELEASE_MANIFEST.md` / the Hub; regenerating the manifest and re-uploading is an `Unreleased` item
+above.
+
+---
+
+## Where the evidence lives
+
+| Topic | Evidence |
+|---|---|
+| All measured metrics | `artifacts/**/*.json`, verified by `release/tools/verify_readme_metrics.py` |
+| Release identity and byte counts | `models/manifest.json`, `models/checksums.sha256`, `RELEASE_MANIFEST.md` |
+| Hugging Face release integrity | [`../HF_RELEASE_VERIFICATION.md`](../HF_RELEASE_VERIFICATION.md), `release/tools/hf_verify_report.txt` |
+| Router defect + 3 live passes | [`RESEARCH_NOTES.md`](RESEARCH_NOTES.md) §3–§4 |
+| Grounding resolution rejection | `docs/PHASE7_RESOLUTION_DECISION.md` |
+| VLM rejection / Phase 6 closure | `artifacts/vlm/phase6_closure.json`, `docs/PHASE6_CLOSURE.md` |
+| Optical-SAR metric | `docs/PHASE12_115_METRIC_COMPUTED.md`, `artifacts/optical_sar/fusion_head_production_v001/pre_registered_115_metric.json` |
+| Owner decisions | `docs/OWNER_DECISIONS_2026-09-23.md` |
+| Documentation reconciliation | `docs/DOCUMENTATION_RECONCILIATION.md` |
+| Release execution state | `release/RELEASE_EXECUTION_CHECKLIST.md`, `release/CURRENT_RELEASE_STATE.md` |

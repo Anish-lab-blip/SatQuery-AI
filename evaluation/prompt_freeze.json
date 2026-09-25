@@ -1,0 +1,19 @@
+{
+  "hash": "523b7edff921fee0",
+  "prompt_freeze": {
+    "method": "sha256 over sorted (module_path, file_sha256) pairs",
+    "modules": [
+      {
+        "path": "specialists/optical_sar/prompts.py",
+        "sha256": "d738bdb5eafa7c9322f6356aac103fb3c0b6219be586513eca10f5081308a420",
+        "version": "optical_sar_v1"
+      },
+      {
+        "path": "specialists/vqa/prompts.py",
+        "sha256": "3fd8c24e6e22aa5233c2246e6018bab0e2c4b463fce5e5d61a90bbcbc9227662",
+        "version": "v001"
+      }
+    ],
+    "set_sha256": "ddd600179d73d9d554b20623a4d469ae6c786a3e775a45e10df2c59884fa054f"
+  }
+}

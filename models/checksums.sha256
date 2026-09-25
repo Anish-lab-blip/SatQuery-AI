@@ -1,0 +1,8 @@
+# sha256 of the six released artifacts, keyed by their path in this repository.
+# Verify with:  sha256sum -c checksums.sha256
+c5ef31277b67aa01a593aec0eac503eeaccc6d674349fda20ca44c9cc6f8e9fa  change/head.pt
+cfae5e43b97ca930f568dc5b8ae4f36b24e9ff717af226159802206ffd63a82a  change_vqa/head.pt
+785815729a3a39fc34dc41894efaf00d8739365d970a3f830a326e68ae888dab  optical_sar/head.pt
+93432f7034be91a8ffd9c1a84e3eeec00bed7832c043fe7f83d2be230284c6bb  grounding/head.pt
+8527c3ed28a293e13293d48601d48e3ceafa137b9acabddaf5de31a58a509b5c  router/adapter.pt
+07c76a75fa04624880ed7730590f5fdd7b145a8232e3c0af411c3c545a5adf5e  vlm/adapter_model.safetensors

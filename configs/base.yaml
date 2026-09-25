@@ -1,0 +1,295 @@
+# SatQuery AI — authoritative configuration registry
+# Architecture v1.0 (docs/ARCHITECTURE_FREEZE.md)
+#
+# RULE: no magic numbers anywhere in Python. Everything tunable lives here.
+# Every value below is loaded, validated and hashed by core/config.py.
+
+project:
+  name: satquery-ai
+  version: "1.0.0"
+  seed: 42
+  schema_version: "1.0"
+
+# ---------------------------------------------------------------------------
+# Input geometry
+# ---------------------------------------------------------------------------
+image:
+  max_pixels: 25000000
+  tile_size: 512
+  tile_overlap: 128
+  max_tiles: 64
+  # plan section 9.1 tile policy: whole-image thumbnail first, then top-K tiles.
+  # max_tiles is the hard ceiling on tiles *examined*; top_k_tiles is how many
+  # are actually sent through a specialist.
+  top_k_tiles: 4
+
+optical:
+  normalization: percentile
+  lower_percentile: 2
+  upper_percentile: 98
+  # CROMA expects exactly 12 optical channels.
+  canonical_channels: 12
+
+sar:
+  representation: db
+  clip_min_db: -30
+  clip_max_db: 5
+  # CROMA expects exactly 2 SAR channels (VV, VH).
+  canonical_channels: 2
+
+# ---------------------------------------------------------------------------
+# Intent router
+# ---------------------------------------------------------------------------
+router:
+  model: sentence-transformers/all-MiniLM-L6-v2
+  # Pinned revision (verified reachable 2026-09-16). 90.9 MB, 22,713,216 params.
+  revision: 1110a243fdf4
+  # Finding F4-1: the MiniLM tokenizer's own ceiling is 256 (verified by probe).
+  # 128 is a deliberate truncation well inside that ceiling, not the model
+  # limit. Satellite queries are short; halving the sequence halves attention
+  # cost for no measurable accuracy loss. The encoder asserts this value is
+  # <= 256, because truncating above the ceiling is a silent no-op.
+  max_length: 128
+  # Verified embedding dimension of all-MiniLM-L6-v2.
+  embedding_dim: 384
+  device: auto              # auto | cpu | cuda
+  hidden_dim: 128
+  dropout: 0.10
+  confidence_threshold: 0.70
+  num_tasks: 6
+  tasks:
+    - vqa
+    - caption
+    - grounding
+    - change
+    - optical_sar
+    - unsupported
+  # Finding F4-2: the encoder is frozen, so embeddings are cached and the
+  # 50,822-param adapter trains on cached vectors. No GPU required.
+  # Measured on CPU: 20 epochs / 4,096 vectors in 0.28 s.
+  training:
+    epochs: 60
+    batch_size: 64
+    learning_rate: 0.001
+    weight_decay: 0.01
+    task_loss_weight: 1.0
+    modality_loss_weight: 0.3
+    binary_loss_weight: 0.5
+    # Finding F4-3: splits are by GROUP (template / hard-negative family),
+    # never by example. Hard-negative families are placed in test so their
+    # accuracy measures generalisation rather than memorisation.
+    val_ratio: 0.15
+    hard_negatives_to_test: true
+
+# ---------------------------------------------------------------------------
+# VLM  (finding C-2, C-3)
+# ---------------------------------------------------------------------------
+vlm:
+  checkpoint: HuggingFaceTB/SmolVLM-500M-Instruct
+  # Pinned revision (verified reachable 2026-09-16). 1015 MB safetensors.
+  revision: a7da5b986cb5
+  # Finding F5-1: AutoModelForVision2Seq does NOT EXIST in transformers 5.17.0
+  # (it is not merely deprecated). AutoModelForImageTextToText is present.
+  # The loader is resolved by feature detection, never hardcoded.
+  loader_class_preference: auto
+  max_new_tokens: 128
+  do_sample: false
+  temperature: 0.0
+  # Finding F5-2: the processor's default longest_edge is 2048, which upscales
+  # our 512 px tiles 4x and then splits them (do_image_splitting=True) into
+  # 17 sub-images. MEASURED:
+  #     default  -> pixel_values (1, 17, 3, 512, 512), 1142 prompt tokens
+  #     pinned   -> pixel_values (1,  1, 3, 512, 512)
+  # The plan estimated a 4x cost overrun; the real figure is ~17x. This value
+  # MUST be set explicitly on the processor at construction time.
+  processor_longest_edge: 512
+  # Kept true so genuinely oversized inputs still split, but at 512 a tile no
+  # longer exceeds max_image_size (also 512) and splitting does not trigger.
+  do_image_splitting: true
+  # Finding F5-3: SmolVLM requires one <image> token per image in the prompt.
+  # Hand-written prompt strings raise ValueError; always build prompts through
+  # processor.apply_chat_template(). Recorded so it is not rediscovered.
+  prompt_must_use_chat_template: true
+  max_images_per_call: 1
+
+# ---------------------------------------------------------------------------
+# Grounding  (finding C-4, C-5)
+# ---------------------------------------------------------------------------
+grounding:
+  checkpoint_repo: chendelong/RemoteCLIP
+  checkpoint_file: RemoteCLIP-ViT-B-32.pt
+  # Pinned revision (verified reachable 2026-09-16). ViT-B-32 checkpoint = 605.2 MB.
+  checkpoint_revision: bf1d8a3ccf2d
+  model_name: ViT-B-32
+  # RESOLVED 2026-09-16. 448 did NOT earn its cost over all 16,159 VRSBench
+  # eval records: mean best IoU -0.0147, Recall@0.5 -0.0022, and every recall
+  # threshold lower (-0.0699 @0.10, -0.0243 @0.25), at 1.59x the latency.
+  # Paired over identical samples: mean diff -0.0147, 95% CI [-0.0160,-0.0134],
+  # t = -22.63. 448 was better on 8.5% of records, worse on 20.9%.
+  # Pre-registered rule and the paired test AGREE on 224.
+  # Evidence: docs/PHASE7_RESOLUTION_DECISION.md
+  image_size: 224
+  resolution_frozen: true
+  nms_iou: 0.50
+  max_candidates: 20
+  confidence_threshold: 0.40
+  # VRSBench stores boxes normalised to 0-100; we store 0-1.
+  benchmark_box_scale: 100.0
+  coordinate_system: normalized_0_1
+  # Measured projected dim of RemoteCLIP ViT-B/32 (finding P7-1). The
+  # transformer width is 768; `visual.proj` maps to THIS. Declared here so
+  # core/config.py can validate the head without importing torch.
+  encoder_projected_dim: 512
+
+# ---------------------------------------------------------------------------
+# Phase 8: trainable head over the FROZEN RemoteCLIP encoder.
+# ---------------------------------------------------------------------------
+grounding_head:
+  hidden_dim: 512
+  dropout: 0.10
+  # Per-cell feature = concat([patch, text, patch*text, global_pool])
+  # = 4 x grounding.encoder_projected_dim (512, measured).
+  #
+  # ENFORCED, not documented: core/config.py rejects any value other than
+  # 4 * grounding.encoder_projected_dim at load time, and
+  # specialists/grounding/remoteclip.py asserts the same 512 against the real
+  # model. A mismatch is a SILENT shape error — torch raises only at the
+  # similarity step, after the patch features are already cached.
+  feature_dim: 2048
+  # Objectness BCE sees 1 positive cell out of 49. Unweighted, the optimum is
+  # "no object" everywhere; this weight is what stops that collapse.
+  positive_confidence_weight: 20.0
+  # Cells are assigned by ground-truth box centre (YOLO/FCOS convention).
+  decode: cell_relative
+
+grounding_training:
+  learning_rate: 0.0001
+  batch_size: 16
+  epochs: 20
+  weight_decay: 0.0001
+  warmup_ratio: 0.05
+  grad_clip: 1.0
+  val_fraction: 0.10
+  num_workers: 2
+  save_every_steps: 500
+  box_loss_weight: 0.5
+  giou_loss_weight: 0.3
+  confidence_loss_weight: 0.2
+
+# ---------------------------------------------------------------------------
+# Change detection  (finding C-9: STANet-style, upstream-verified hyperparams)
+# ---------------------------------------------------------------------------
+change:
+  tile_size: 256
+  tile_overlap: 0
+  threshold: 0.50
+  min_component_pixels: 32
+  encoder: resnet18
+  sa_mode: PAM             # BAM | PAM
+  pretrained: true
+  learning_rate: 0.001
+  batch_size: 8
+  bce_weight: 0.5
+  dice_weight: 0.5
+  levir_split:
+    train: 7120
+    val: 1024
+    test: 2048
+
+# ---------------------------------------------------------------------------
+# Optical-SAR fusion  (finding C-1, C-7)
+# ---------------------------------------------------------------------------
+croma:
+  checkpoint_repo: antofuller/CROMA
+  checkpoint_file: CROMA_base.pt
+  # Pinned revision (verified reachable 2026-09-16). CROMA_base.pt = 777.6 MB.
+  checkpoint_revision: 0dd28e3d633b
+  variant: base
+  # finding C-7: image_resolution % 8 == 0. Native 120 -> 225 patches.
+  image_resolution: 120
+  encoder_dim: 768
+  optical_channels: 12
+  sar_channels: 2
+  modalities: [optical, sar, joint]
+  modalities_used: [optical, sar, joint]
+
+fusion:
+  # concatenated dim = 3 * 768 + 12 + 2 = 2318
+  # finding C-1: the availability mask is consumed HERE, not by CROMA.
+  input_dim: 2318
+  hidden_dim: 512
+  dropout: 0.2
+  num_classes: 19          # BigEarthNet CLC classes
+
+# ---------------------------------------------------------------------------
+# Evidence + confidence
+# ---------------------------------------------------------------------------
+evidence:
+  max_items: 32
+  coordinate_system_default: normalized_0_1
+
+confidence:
+  temperature_scaling: true
+  calibration_file: calibration_v001.json
+
+# ---------------------------------------------------------------------------
+# Controller
+# ---------------------------------------------------------------------------
+agent:
+  max_specialists: 4
+  timeout_seconds: 120
+  unload_after_workflow: true
+  states:
+    - RECEIVE
+    - PARSE
+    - VALIDATE
+    - PLAN
+    - PREPROCESS
+    - EXECUTE
+    - AGGREGATE
+    - VERIFY
+    - RESPOND
+
+# ---------------------------------------------------------------------------
+# Training  (finding C-6: T4 is SM 7.5 -> fp16, NOT bf16)
+# ---------------------------------------------------------------------------
+training:
+  precision: fp16
+  vlm_batch_size: 2
+  vlm_gradient_accumulation: 8
+  vlm_learning_rate: 0.0002
+  vlm_epochs: 1
+  lora_rank: 16
+  lora_alpha: 32
+  lora_dropout: 0.05
+  weight_decay: 0.01
+  warmup_ratio: 0.05
+  gradient_checkpointing: true
+  save_every_steps: 500
+
+# ---------------------------------------------------------------------------
+# Evaluation
+# ---------------------------------------------------------------------------
+evaluation:
+  immutable_public_test: true
+  hidden_data_access: false
+  official_aggregate_weights: null
+  leakage_split_key: scene_id
+
+# ---------------------------------------------------------------------------
+# Deployment  (finding C-8)
+# ---------------------------------------------------------------------------
+deployment:
+  platform: huggingface-spaces
+  sdk: gradio
+  zerogpu: true
+  # finding C-8: ZeroGPU does not support torch.compile. Never enable.
+  torch_compile: false
+  # ZeroGPU free tier = 5 GPU-min/day. Declared duration reserves quota up front.
+  gpu_duration_vqa: 20
+  gpu_duration_grounding: 45
+  gpu_duration_change: 30
+  gpu_duration_optical_sar: 45
+  cpu_mode_required: true
+  lazy_load: true
+  cache_max_models: 1

@@ -1,0 +1,67 @@
+# SatQuery AI — ignored paths
+#
+# This repository intentionally ships documentation + source code only. The paths below are
+# excluded so that a local working copy of the full project never commits them by accident.
+
+# --- data and artifacts (not part of this repository) ---
+artifacts/
+data/
+datasets/
+notebooks/
+logs/
+reports/
+demo/
+checkpoints/
+weights/
+*.zip
+*.pt
+*.pth
+*.safetensors
+*.bin
+*.npy
+*.npz
+*.tif
+*.tiff
+*.png
+*.jpg
+*.jpeg
+!screenshots/*.png
+
+# --- the static frontend lives in its own repository ---
+frontend/
+frontend_pending_cleanup/
+
+# --- secrets: never commit any of these ---
+.env
+.env.*
+*.pem
+*.key
+secrets.json
+credentials.json
+credentials*.txt
+*token*.txt
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+junit*.xml
+.pytest_tmp/
+
+# --- editors / OS ---
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db

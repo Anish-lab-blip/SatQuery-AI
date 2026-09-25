@@ -1,0 +1,72 @@
+# SatQuery AI — OPTIONAL caption-metric dependencies (ruling R-16)
+#
+# WHY THIS IS A SEPARATE FILE AND NOT PART OF requirements.txt
+# ------------------------------------------------------------
+# R-16 requires that the caption metrics use established third-party
+# implementations AND that those dependencies be ISOLATED. They are isolated
+# here, in a file nobody installs by default, for two measured reasons:
+#
+#   1. BERTScore pulls torch + transformers. requirements.txt's core profile is
+#      the CPU/dev profile used by the schema, geo and unit-test paths, and the
+#      API's CPU-only contract depends on those paths not dragging in a model
+#      stack. `evaluation/metrics/caption.py` keeps every third-party import
+#      inside a function so that importing the module is free; keeping the
+#      packages out of requirements.txt keeps the same boundary at install time.
+#
+#   2. CIDEr needs a Java runtime, which pip cannot express. Declaring the
+#      Python half as mandatory would imply the metric works when it does not.
+#
+# `evaluation/metrics/caption.py` reports each of the four SEPARATELY, because
+# the remedies differ. Install this file and then run
+# `caption_capability()` to see which of the four the environment actually
+# supports -- installing this file does NOT make all four work.
+#
+#     pip install -r requirements-caption.txt
+#     python -c "from evaluation.metrics import caption; import json; \
+#                print(json.dumps(caption.caption_capability(), indent=2))"
+#
+# PINNED EXACTLY, NOT RANGED. These are metrics: a version bump can change a
+# published number without changing the input. `PINNED_VERSIONS` in
+# `evaluation/metrics/caption.py` records the same versions, and
+# `caption_capability()` flags a mismatch between the two, so this file and the
+# code cannot silently disagree.
+
+# --- BLEU: sacrebleu ---
+# Chosen over nltk because plain "BLEU" has several mutually incomparable
+# variants and sacrebleu pins the tokenizer, smoothing and n-gram order and
+# reports its own signature with the score. No extra runtime requirement.
+sacrebleu==2.4.3
+
+# --- ROUGE-L: rouge_score ---
+# Google Research's implementation. Pure Python; no extra runtime requirement.
+# R-16 records ROUGE-L as the one buildable with no blocker at all.
+rouge_score==0.1.2
+
+# --- CIDEr: pycocoevalcap ---
+# The reference implementation from the CIDEr paper's authors. NOTE: CIDEr's
+# PTB tokenizer shells out to Java. Installing this package is necessary but NOT
+# sufficient -- `caption_capability()['cider']` checks for `java` on PATH and
+# reports `available: False` without it. That is why the metric is reported as
+# blocked on this machine despite the package being installed.
+pycocoevalcap==1.2
+
+# --- BERTScore: bert-score ---
+# Zhang et al. Pulls torch and transformers, and DOWNLOADS a checkpoint on first
+# use, so the package can be installed while the metric is still unusable. The
+# default checkpoint for lang="en" is `roberta-large`, declared as
+# `MetricSpec.model_repo` so the capability report can check that NAMED artifact
+# rather than "some model".
+#
+# Measured on 2026-09-23: this package and its stack installed cleanly, but the
+# local HuggingFace cache held a corrupt `models--roberta-large` entry (a 0-byte
+# config.json), and `transformers` prefers a local snapshot over a download --
+# so the checkpoint was unobtainable even though the hub was serving it. The
+# remedy is to remove the corrupt cache entry and let it re-download:
+#
+#     rm -rf "$HOME/.cache/huggingface/hub/models--roberta-large"
+#
+# Until that is done, `caption_capability()['bertscore']` reports
+# `available: False` with that exact remedy in its `reason`. BERTScore itself
+# works; `score_captions(..., model_type=...)` can name a different checkpoint
+# from bert-score's own `model2layers` table.
+bert-score==0.3.13

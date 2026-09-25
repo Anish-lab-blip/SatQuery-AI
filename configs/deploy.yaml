@@ -1,0 +1,44 @@
+# SatQuery AI — Hugging Face Spaces packaging manifest (Phase 18).
+#
+# THIS FILE IS NOT PART OF THE CONFIG REGISTRY.
+#
+# `core/config.py` reads exactly ONE file — `configs/base.yaml` (the module's
+# `DEFAULT_CONFIG`) — through a single `yaml.safe_load`. It never globs
+# `configs/*.yaml`, so this file is never read by the loader. That matters
+# because `Config.hash` is a sha256 over the WHOLE registry; merging any key from
+# this file into the registry would move the hash off the recorded benchmark
+# value `78f1e3700da15aa1`. The `registry: false` marker below makes the
+# non-membership explicit and machine-readable, and
+# `scripts/validate_deploy_config.py` asserts it.
+#
+# This file encodes two frozen findings:
+#   * C-8  — ZeroGPU does not support torch.compile, so `torch_compile` is false
+#            (`core/config.py` hard-fails on `deployment.torch_compile is True`).
+#   * The ZeroGPU free tier is 5 GPU-minutes/day; the `gpu_duration_*` values
+#     reserve quota up front and are documented to fit within that budget.
+#
+# The `deployment:` block below is a byte-for-byte copy of `configs/base.yaml`
+# lines 282-295. It is kept identical on purpose so the two cannot silently
+# drift; `scripts/validate_deploy_config.py` enforces the equality key for key.
+#
+# Deliberately ABSENT (the freeze does not specify these): a hardware SKU, an SDK
+# version pin, a requirements filename, the Space entrypoint/`app_file`, Space
+# visibility/owner, and a Python version. See
+# `docs/PHASE18_DEPLOYMENT_PACKAGING.md` for the open-items list.
+
+registry: false
+
+deployment:
+  platform: huggingface-spaces
+  sdk: gradio
+  zerogpu: true
+  # finding C-8: ZeroGPU does not support torch.compile. Never enable.
+  torch_compile: false
+  # ZeroGPU free tier = 5 GPU-min/day. Declared duration reserves quota up front.
+  gpu_duration_vqa: 20
+  gpu_duration_grounding: 45
+  gpu_duration_change: 30
+  gpu_duration_optical_sar: 45
+  cpu_mode_required: true
+  lazy_load: true
+  cache_max_models: 1

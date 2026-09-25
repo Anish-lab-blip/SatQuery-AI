@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: satquery-orchestrator
+    runtime: python
+    plan: free
+    buildCommand: pip install -r deploy/render/requirements.txt
+    startCommand: uvicorn deploy.render.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PORT
+        sync: false
+      - key: SATQUERY_ALLOWED_ORIGINS
+        sync: false
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: CODESPACE_NAME
+        sync: false
+      - key: CODESPACE_PORT
+        value: "8000"
+      - key: SATQUERY_DEVICE
+        value: "cpu"
+      - key: SATQUERY_WAKE_TIMEOUT_S
+        value: "120"
+      - key: SATQUERY_UPSTREAM_TIMEOUT_S
+        value: "90"

@@ -1,0 +1,28 @@
+# Lean CPU-only inference deps for the SatQuery AI Codespace.
+# This profile deliberately omits gradio (not needed at serve time — the Space
+# serves JSON via FastAPI only) and pins torch to the CPU wheel to avoid the
+# multi-GB CUDA download on Codespaces.
+
+# CPU-only torch (avoids the CUDA build on Codespaces)
+torch==2.5.1+cpu --extra-index-url https://download.pytorch.org/whl/cpu
+torchvision==0.20.1+cpu --extra-index-url https://download.pytorch.org/whl/cpu
+# web
+fastapi>=0.111
+uvicorn[standard]>=0.30
+# geospatial + image (used by serving)
+numpy>=1.26,<3
+pyyaml>=6.0
+pydantic>=2.6,<3
+rasterio>=1.3
+pyproj>=3.6
+opencv-python-headless>=4.9
+reportlab>=4.1
+# models (pinned to verified contracts)
+transformers>=4.52
+open-clip-torch>=2.24
+sentence-transformers>=2.7
+peft>=0.10
+huggingface_hub>=0.23
+safetensors>=0.4
+einops>=0.7
+timm>=0.9
